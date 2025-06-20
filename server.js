@@ -8,9 +8,18 @@ const app = express();
 app.use(express.json());
 
 // 1) Yeni talep alma
-app.post('/api/talep', (req, res) => {
-  // TODO: DB kayıt
-  res.json({ message: 'Talep alındı', caseId: 'dummy-123' });
+app.post('/api/talep', async (req, res) => {
+  const { name } = req.body;
+
+  const { data, error } = await supabase
+    .from('customers')
+    .insert([{ name }]);
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json({ message: 'Talep alındı', data });
 });
 
 // 2) AI ürün çıkarımı (stub)
