@@ -8,6 +8,8 @@ const app = express();
 app.use(express.json());
 
 app.post('/api/talep', async (req, res) => {
+  console.log('🔍 Gelen veri:', req.body);
+  
   const { customer_name } = req.body;
 
   const { data, error } = await supabase
