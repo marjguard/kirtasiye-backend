@@ -1,6 +1,6 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 10000;
@@ -24,8 +24,6 @@ app.post("/requests", (req, res) => {
   if (!customer_name) {
     return res.status(400).json({ error: "customer_name is required" });
   }
-
-  // Örnek Supabase insert isteği burada yapılabilir
 
   res.status(201).json({ message: "İstek başarıyla alındı", customer_name });
 });
