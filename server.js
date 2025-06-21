@@ -1,54 +1,35 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import { supabase } from './supabaseClient.js';
-
-dotenv.config();
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const app = express();
-app.use(express.json());
+const PORT = process.env.PORT || 10000;
 
-// 🔍 Tüm gelen istekleri logla (debug için)
-app.use((req, res, next) => {
-  console.log('🟡 Gelen istek:', req.method, req.url);
-  console.log('🟠 Body:', req.body);
-  next();
+app.use(cors());
+app.use(bodyParser.json());
+
+// Test endpoint
+app.get("/", (req, res) => {
+  console.log("🟡 Gelen istek: GET /");
+  res.send("Kırtasiye Backend Çalışıyor");
 });
 
-// 🟢 1) Yeni müşteri talebi alma
-app.post('/api/talep', async (req, res) => {
-  const { name } = req.body;
+// POST endpoint (örnek)
+app.post("/requests", (req, res) => {
+  console.log("🟡 Gelen istek: POST /requests");
+  console.log("🟠 Body:", req.body);
 
-  if (!name) {
-    return res.status(400).json({ error: 'name alanı eksik' });
+  const { customer_name } = req.body;
+
+  if (!customer_name) {
+    return res.status(400).json({ error: "customer_name is required" });
   }
 
-  const { data, error } = await supabase
-    .from('customers')
-    .insert([{ name }]);
+  // Örnek Supabase insert isteği burada yapılabilir
 
-  if (error) {
-    return res.status(500).json({ error: error.message });
-  }
-
-  res.json({ message: 'Talep alındı', data });
+  res.status(201).json({ message: "İstek başarıyla alındı", customer_name });
 });
 
-// 🟡 2) AI ürün çıkarımı (şu an pasif)
-app.post('/api/extract-products', (req, res) => {
-  res.json({ products: [] });
-});
-
-// 🟡 3) Logo eşleşmesi (şu an pasif)
-app.post('/api/logo-match', (req, res) => {
-  res.json({ matches: [] });
-});
-
-// 🟡 4) PDF üretimi (şu an pasif)
-app.get('/api/pdf-generate/:caseId', (req, res) => {
-  res.json({ pdfUrl: 'https://example.com/dummy.pdf' });
-});
-
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ Backend çalışıyor → http://localhost:${PORT}`);
 });
